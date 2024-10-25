@@ -1,7 +1,6 @@
 package org.lunatech.ecommerce.adapters.quarkus;
 
 import java.util.Optional;
-import org.lunatech.ecommerce.Order;
 import org.lunatech.ecommerce.Product;
 import org.lunatech.ecommerce.ports.EcommercePersistencePort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -38,27 +37,5 @@ public class EcommercePersistenceQuarkusAdapter implements EcommercePersistenceP
     public Product getProduct_(String productId) {
         return Optional.ofNullable(ProductEntity.<ProductEntity>findById(productId))
             .map(entity -> entity.toDTO()).orElseGet(() -> null);
-    }
-
-    public void saveOrder(Order order) {
-        this.saveOrder_(order);
-    }
-
-    @Transactional(SUPPORTS)
-    public void saveOrder_(Order order) {
-        OrderEntity entity = new OrderEntity();
-        entity.fromDTO(order);
-        entity.persist();
-        order.setId(entity.id);
-    }
-
-    public Order getOrder(String orderId) {
-        return this.getOrder_(orderId);
-    }
-
-    @Transactional(SUPPORTS)
-    public Order getOrder_(String orderId) {
-        OrderEntity entity = OrderEntity.findById(orderId);
-        return entity.toDTO();
     }
 }

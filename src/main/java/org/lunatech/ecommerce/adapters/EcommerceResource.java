@@ -2,11 +2,9 @@ package org.lunatech.ecommerce.adapters;
 
 import org.jboss.resteasy.reactive.RestPath;
 import org.lunatech.ecommerce.EcommerceService;
-import org.lunatech.ecommerce.Order;
 import org.lunatech.ecommerce.Product;
 import org.lunatech.ecommerce.ports.EcommerceInputPort;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
@@ -49,36 +47,5 @@ public class EcommerceResource implements EcommerceInputPort {
     public Product getProduct(@RestPath("id") String productId) {
         String userId = ""; // should be retrieved from a session or something
         return service.onGetProduct(userId, productId);
-    }
-
-    @PUT
-    @Path("/order/delivered/{id}")
-    public void onOrderDelivered(@RestPath("id") String orderId) {
-        service.onUpdateOrderStatus(orderId, "delivered");
-    }
-
-    @POST
-    @Path("/order")
-    public String placeOrder(Order order) {
-        return service.onPlaceOrder(order);
-    }
-
-    @GET
-    @Path("/order/{id}")
-    public Order getOrder(@RestPath("id") String orderId) {
-        return service.onGetOrder(orderId);
-    }
-
-    @PUT
-    @Path("/order/paid/{id}")
-    public void onOrderPaid(@RestPath("id") String orderId) {
-        service.onUpdateOrderStatus(orderId, "paid");
-    }
-
-
-    @DELETE
-    @Path("/order/{id}")
-    public void cancelOrder(@RestPath("id") String orderId) {
-        service.onCancelOrder(orderId);
     }
 }

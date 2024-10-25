@@ -1,6 +1,5 @@
 package org.lunatech.ecommerce.ports;
 
-import org.lunatech.ecommerce.Order;
 import org.lunatech.ecommerce.Product;
 
 /**
@@ -18,17 +17,4 @@ public interface EcommerceInputPort {
     public void setProductDiscout(String productId, double discout);
 
     public void renameProduct(String productId, String name);
-
-    /**
-     * @return payment link url
-     */
-    public String placeOrder(Order order);
-
-    public Order getOrder(String orderId);
-
-    public void onOrderPaid(String orderId);
-
-    public void onOrderDelivered(String orderId);
-
-    public void cancelOrder(String orderId);
 }

@@ -4,8 +4,6 @@ import org.jboss.logging.Logger;
 import org.lunatech.ecommerce.events.ProductEvent;
 import org.lunatech.ecommerce.events.ViewProductEvent;
 import org.lunatech.ecommerce.ports.EcommercePersistencePort;
-import org.lunatech.ecommerce.ports.NotificationServicePort;
-import org.lunatech.ecommerce.ports.PaymentServicePort;
 import org.lunatech.ecommerce.ports.StreamOutputPort;
 import org.lunatech.ecommerce.ports.UserServicePort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -29,12 +27,6 @@ public class EcommerceService {
 
     @Inject
     UserServicePort userService;
-
-    @Inject
-    NotificationServicePort notificationService;
-
-    @Inject
-    PaymentServicePort paymentService;
 
     public Product onGetProduct(String userId, String productId) {
         // the business logic could be:
@@ -71,7 +63,7 @@ public class EcommerceService {
         storage.saveProduct(product);
 
         // 3. notify users who are interested in similar products. (to an output adapter to some other microservice)
-        // notificationService.notifyNewProduct(product);
+        // omitted here...
 
         // 4. publish an add product event into kafka for metrics. (to Kafka output adapter)
         // ProductEvent event = new ProductEvent();
@@ -101,7 +93,7 @@ public class EcommerceService {
         storage.saveProduct(product);
 
         // 4. notify users who are interested in this products. (to an output adapter to some other microservice)
-        notificationService.notifyDiscount(product);
+        // omitted here..
 
         // 5. publish an add product event into kafka for metrics. (to Kafka output adapter)
         // ProductEvent event = new ProductEvent();
@@ -130,36 +122,5 @@ public class EcommerceService {
         storage.saveProduct(product);
 
         // 4. other stuff...
-    }
-
-    public String onPlaceOrder(Order order) {
-        // the business logic could be:
-        // 1. change the order status to unpaid.
-        order.setStatus("unpaid");
-
-        // 2. save the order.
-        storage.saveOrder(order);
-
-        // 3. contact the payment service to generate a payment link. (to an output adapter to some other microservice)
-        var product = storage.getProduct(order.getProductId());
-        var link = paymentService.requestPaymentLink(order.getId(),
-                product.getPrice() * product.getDiscount());
-        return link;
-    }
-
-    public Order onGetOrder(String orderId) {
-        // the business logic could be:
-        // omitted...
-        return null;
-    }
-
-    public void onUpdateOrderStatus(String orderId, String status) {
-        // the business logic could be:
-        // omitted...
-    }
-
-    public void onCancelOrder(String orderId) {
-        // the business logic could be:
-        // omitted...
     }
 }
