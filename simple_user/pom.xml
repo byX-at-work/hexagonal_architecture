@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.lunatech.app</groupId>
-    <artifactId>hexagonal_architecture_playground</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0.0-SNAPSHOT</version>
 
-    <modules>
-        <module>simple_user</module>
-        <module>ecommerce</module>
-    </modules>
+    <parent>
+        <groupId>org.lunatech.app</groupId>
+        <artifactId>hexagonal_architecture_playground</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <groupId>org.lunatech.user</groupId>
+    <artifactId>simple_user</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
@@ -48,34 +48,6 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest</artifactId>
         </dependency>
-        <!-- <dependency> -->
-        <!--     <groupId>io.quarkus</groupId> -->
-        <!--     <artifactId>quarkus-reactive-pg-client</artifactId> -->
-        <!-- </dependency> -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-openapi</artifactId>
-        </dependency>
-        <!-- <dependency> -->
-        <!--     <groupId>io.quarkus</groupId> -->
-        <!--     <artifactId>quarkus-hibernate-reactive-panache</artifactId> -->
-        <!-- </dependency> -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-hibernate-validator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-client-jackson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-hibernate-orm-panache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jdbc-postgresql</artifactId>
-        </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
@@ -85,12 +57,6 @@
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.34</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

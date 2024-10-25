@@ -8,7 +8,6 @@
 
     <modules>
         <module>simple_user</module>
-        <module>ecommerce</module>
     </modules>
 
     <properties>
