@@ -1,4 +1,4 @@
-package org.lunatech.ecommerce.adapters;
+package org.lunatech.ecommerce.adapters.quarkus;
 
 import org.jboss.resteasy.reactive.RestPath;
 import org.lunatech.ecommerce.EcommerceService;

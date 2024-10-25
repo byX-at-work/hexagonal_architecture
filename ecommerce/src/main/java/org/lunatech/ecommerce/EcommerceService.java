@@ -32,10 +32,10 @@ public class EcommerceService {
         // the business logic could be:
         // 1. check visibility of the product to the user.
         // 2. add the product to user's view history. (to an output adapter to some other microservice)
-        // var result = userService.checkUserPrivilege(userId, "getProduct");
-        // if (!result)
-        //     // product is not visiable to the user
-        //     return null;
+        var result = userService.checkUserPrivilege(userId, "getProduct");
+        if (!result)
+            // product is not visiable to the user
+            return null;
 
         // 3. fetch the product
         var product = storage.getProduct(productId);
@@ -54,10 +54,10 @@ public class EcommerceService {
     public String onAddProduct(String userId, Product product) {
         // the business logic could be:
         // 1. check whether the user has the privilige to add this product. (to an output adapter to some other microservice)
-        // var result = userService.checkUserPrivilege(userId, "addProduct");
-        // if (!result)
-        //     // not authorized
-        //     return;
+        var result = userService.checkUserPrivilege(userId, "addProduct");
+        if (!result)
+            // not authorized
+            return "";
 
         // 2. add the product.
         storage.saveProduct(product);

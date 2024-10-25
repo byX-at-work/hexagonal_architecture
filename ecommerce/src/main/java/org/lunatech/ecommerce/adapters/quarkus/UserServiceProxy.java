@@ -9,7 +9,7 @@ import org.lunatech.ecommerce.ports.UserServicePort;
 /**
  * UserServiceProxy
  */
-@Path("/api/user")
+@Path("/api/users")
 @RegisterRestClient(configKey = "user")
 public interface UserServiceProxy extends UserServicePort {
 
