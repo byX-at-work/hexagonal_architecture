@@ -6,7 +6,7 @@ import lombok.Data;
  * ViewProductEvent
  */
 @Data
-public class ViewProductEvent extends Event {
+public class ProductViewEvent extends Event {
 
     String userId;
 

@@ -2,7 +2,7 @@ package org.lunatech.ecommerce;
 
 import org.jboss.logging.Logger;
 import org.lunatech.ecommerce.events.ProductEvent;
-import org.lunatech.ecommerce.events.ViewProductEvent;
+import org.lunatech.ecommerce.events.ProductViewEvent;
 import org.lunatech.ecommerce.ports.EcommercePersistencePort;
 import org.lunatech.ecommerce.ports.StreamOutputPort;
 import org.lunatech.ecommerce.ports.UserServicePort;
@@ -22,8 +22,8 @@ public class EcommerceService {
     @Inject
     EcommercePersistencePort storage;
 
-    // @Inject
-    // StreamOutputPort kafka;
+    @Inject
+    StreamOutputPort kafka;
 
     @Inject
     UserServicePort userService;
@@ -41,11 +41,11 @@ public class EcommerceService {
         var product = storage.getProduct(productId);
 
         // 4. publish an user view event into kafka for metrics. (to Kafka output adapter)
-        // ViewProductEvent event = new ViewProductEvent();
-        // event.setUserId(userId);
-        // event.setProductId(productId);
-        // event.setViewTime(System.currentTimeMillis());
-        // kafka.sendEvent("product-view", event);
+        ProductViewEvent event = new ProductViewEvent();
+        event.setUserId(userId);
+        event.setProductId(productId);
+        event.setViewTime(System.currentTimeMillis());
+        kafka.sendEvent("product-view", event);
 
         // 5. other stuff...
         return product;
@@ -66,13 +66,13 @@ public class EcommerceService {
         // omitted here...
 
         // 4. publish an add product event into kafka for metrics. (to Kafka output adapter)
-        // ProductEvent event = new ProductEvent();
-        // event.setId(product.getId());
-        // event.setName(product.getName());
-        // event.setPrice(product.getPrice());
-        // event.setDiscount(product.getDiscount());
-        // event.setNew(true);
-        // kafka.sendEvent("product", event);
+        ProductEvent event = new ProductEvent();
+        event.setId(product.getId());
+        event.setName(product.getName());
+        event.setPrice(product.getPrice());
+        event.setDiscount(product.getDiscount());
+        event.setNew(true);
+        kafka.sendEvent("product", event);
 
         // 5. other stuff...
         return product.getId();
@@ -96,13 +96,13 @@ public class EcommerceService {
         // omitted here..
 
         // 5. publish an add product event into kafka for metrics. (to Kafka output adapter)
-        // ProductEvent event = new ProductEvent();
-        // event.setId(product.getId());
-        // event.setName(product.getName());
-        // event.setPrice(product.getPrice());
-        // event.setDiscount(product.getDiscount());
-        // event.setNew(false);
-        // kafka.sendEvent("product", event);
+        ProductEvent event = new ProductEvent();
+        event.setId(product.getId());
+        event.setName(product.getName());
+        event.setPrice(product.getPrice());
+        event.setDiscount(product.getDiscount());
+        event.setNew(false);
+        kafka.sendEvent("product", event);
 
         // 6. other stuff...
     }
