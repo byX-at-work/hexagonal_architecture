@@ -7,8 +7,9 @@ import org.lunatech.ecommerce.ports.EcommercePersistencePort;
 import org.lunatech.ecommerce.ports.StreamOutputPort;
 import org.lunatech.ecommerce.ports.UserServicePort;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import static org.mockito.Mockito.*;
 
 /**
  * EcommerceServiceTest
@@ -44,8 +45,8 @@ public class EcommerceServiceTest {
         String userId = "test_user";
         var product = getTestProduct();
 
-        Mockito.when(userService.checkUserPrivilege(userId, "addProduct")).thenReturn(true);
-        Mockito.doAnswer((invocation) -> {
+        when(userService.checkUserPrivilege(userId, "addProduct")).thenReturn(true);
+        doAnswer((invocation) -> {
             Product p = invocation.getArgument(0);
             p.setId(GENERATED_PRODUCT_ID);
             return null;
@@ -54,17 +55,17 @@ public class EcommerceServiceTest {
         EcommerceService service = new EcommerceService(storage, kafka, userService);
         var productId = service.onAddProduct(userId, product);
         assertEquals(GENERATED_PRODUCT_ID, productId);
-        Mockito.verify(storage).saveProduct(product);
+        verify(storage).saveProduct(product);
     }
 
     @Test
     public void shouldFailToAddProductWithoutPermission() {
         String userId = "test_user";
-        Mockito.when(userService.checkUserPrivilege(userId, "addProduct")).thenReturn(false);
+        when(userService.checkUserPrivilege(userId, "addProduct")).thenReturn(false);
         EcommerceService service = new EcommerceService(storage, kafka, userService);
         var product = getTestProduct();
         service.onAddProduct(userId, product);
-        Mockito.verify(storage, Mockito.never()).saveProduct(product);
+        verify(storage, never()).saveProduct(product);
     }
 
     @Test
@@ -72,8 +73,8 @@ public class EcommerceServiceTest {
         String userId = "test_user";
         var product = getTestProduct();
 
-        Mockito.when(userService.checkUserPrivilege(userId, "getProduct")).thenReturn(true);
-        Mockito.when(storage.getProduct(GENERATED_PRODUCT_ID)).thenReturn(product);
+        when(userService.checkUserPrivilege(userId, "getProduct")).thenReturn(true);
+        when(storage.getProduct(GENERATED_PRODUCT_ID)).thenReturn(product);
 
         EcommerceService service = new EcommerceService(storage, kafka, userService);
         var p = service.onGetProduct(userId, GENERATED_PRODUCT_ID);
@@ -83,7 +84,7 @@ public class EcommerceServiceTest {
     @Test
     public void shouldFailToGetProductWithoutPermission() {
         String userId = "test_user";
-        Mockito.when(userService.checkUserPrivilege(userId, "getProduct")).thenReturn(false);
+        when(userService.checkUserPrivilege(userId, "getProduct")).thenReturn(false);
         EcommerceService service = new EcommerceService(storage, kafka, userService);
         var product = service.onGetProduct(userId, GENERATED_PRODUCT_ID);
         assertEquals(null, product);
@@ -95,13 +96,13 @@ public class EcommerceServiceTest {
         var product = getTestProduct();
         String newName = "new test product name";
 
-        Mockito.when(userService.checkUserPrivilege(userId, "updateProduct")).thenReturn(true);
-        Mockito.when(storage.getProduct(GENERATED_PRODUCT_ID)).thenReturn(product);
-        Mockito.doAnswer((invocation) -> {
+        when(userService.checkUserPrivilege(userId, "updateProduct")).thenReturn(true);
+        when(storage.getProduct(GENERATED_PRODUCT_ID)).thenReturn(product);
+        doAnswer((invocation) -> {
             Product p = invocation.getArgument(0);
             assertEquals(newName, p.getName());
             return null;
-        }).when(storage).saveProduct(Mockito.any());
+        }).when(storage).saveProduct(any());
 
         EcommerceService service = new EcommerceService(storage, kafka, userService);
         service.onRenameProduct(userId, GENERATED_PRODUCT_ID, newName);
@@ -110,11 +111,10 @@ public class EcommerceServiceTest {
     @Test
     public void shouldFailToRenameProductWithoutPermission() {
         String userId = "test_user";
-        Mockito.when(userService.checkUserPrivilege(userId, "updateProduct")).thenReturn(false);
+        when(userService.checkUserPrivilege(userId, "updateProduct")).thenReturn(false);
         EcommerceService service = new EcommerceService(storage, kafka, userService);
-        var product = getTestProduct();
         service.onRenameProduct(userId, GENERATED_PRODUCT_ID, "whatever");
-        Mockito.verify(storage, Mockito.never()).saveProduct(product);
+        verify(storage, never()).saveProduct(any());
     }
 
     @Test
@@ -123,13 +123,13 @@ public class EcommerceServiceTest {
         double newDiscount = 0.33;
         var product = getTestProduct();
 
-        Mockito.when(userService.checkUserPrivilege(userId, "updateProduct")).thenReturn(true);
-        Mockito.when(storage.getProduct(GENERATED_PRODUCT_ID)).thenReturn(product);
-        Mockito.doAnswer((invocation) -> {
+        when(userService.checkUserPrivilege(userId, "updateProduct")).thenReturn(true);
+        when(storage.getProduct(GENERATED_PRODUCT_ID)).thenReturn(product);
+        doAnswer((invocation) -> {
             Product p = invocation.getArgument(0);
             assertEquals(newDiscount, p.getDiscount());
             return null;
-        }).when(storage).saveProduct(Mockito.any());
+        }).when(storage).saveProduct(any());
 
         EcommerceService service = new EcommerceService(storage, kafka, userService);
         service.onSetProductDiscout(userId, GENERATED_PRODUCT_ID, newDiscount);
@@ -138,11 +138,10 @@ public class EcommerceServiceTest {
     @Test
     public void shouldFailToSetProductDiscountWithoutPermission() {
         String userId = "test_user";
-        Mockito.when(userService.checkUserPrivilege(userId, "updateProduct")).thenReturn(false);
+        when(userService.checkUserPrivilege(userId, "updateProduct")).thenReturn(false);
         EcommerceService service = new EcommerceService(storage, kafka, userService);
-        var product = getTestProduct();
         service.onSetProductDiscout(userId, GENERATED_PRODUCT_ID, 0.999);
-        Mockito.verify(storage, Mockito.never()).saveProduct(product);
+        verify(storage, never()).saveProduct(any());
     }
 
 }
