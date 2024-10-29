@@ -1,32 +1,32 @@
 package org.lunatech.ecommerce;
 
-import org.jboss.logging.Logger;
 import org.lunatech.ecommerce.events.ProductEvent;
 import org.lunatech.ecommerce.events.ProductViewEvent;
 import org.lunatech.ecommerce.ports.EcommercePersistencePort;
 import org.lunatech.ecommerce.ports.StreamOutputPort;
 import org.lunatech.ecommerce.ports.UserServicePort;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+// import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * EcommerceService
  * Accroding to the defination, we should only keep business logic here.
  * Just to set up an example, some logics are written by comments instead of actual code.
  */
-@ApplicationScoped
+// @ApplicationScoped
 public class EcommerceService {
-    @Inject
-    Logger logger;
 
-    @Inject
     EcommercePersistencePort storage;
 
-    @Inject
     StreamOutputPort kafka;
 
-    @Inject
     UserServicePort userService;
+
+    public EcommerceService(EcommercePersistencePort storage, StreamOutputPort kafka,
+            UserServicePort userService) {
+        this.storage = storage;
+        this.kafka = kafka;
+        this.userService = userService;
+    }
 
     public Product onGetProduct(String userId, String productId) {
         // the business logic could be:

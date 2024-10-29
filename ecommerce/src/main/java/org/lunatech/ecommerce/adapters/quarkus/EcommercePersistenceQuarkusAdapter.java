@@ -23,7 +23,9 @@ public class EcommercePersistenceQuarkusAdapter implements EcommercePersistenceP
 
     @Transactional(SUPPORTS)
     public void saveProduct_(Product product) {
-        ProductEntity entity = new ProductEntity();
+        var id = Optional.ofNullable(product.getId()).orElse("");
+        var entity = Optional.ofNullable(ProductEntity.<ProductEntity>findById(id))
+            .orElseGet(() -> new ProductEntity());
         entity.fromDTO(product);
         entity.persist();
         product.setId(entity.id);
