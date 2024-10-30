@@ -4,6 +4,37 @@ This project is a microservice application that follows the principles of [Hexag
 
 To highlight the advantages of hexagonal architecture, this project showcases a simple e-commerce product management service with two distinct implementations: one using Quarkus and another using Spring. Through these implementations, the project demonstrates how the architecture’s design principles support a high degree of modularity and adaptability across different frameworks.
 
+# About the Project
+
+## Architecture
+
+The diagram below shows the architecture of the e-commerce service.
+
+![architecture](./architecture.png)
+
+## Project Structure
+
+```
+.
+├── ecommerce/         // the ecommerce service
+    ├── src/
+    └── ...
+      └── ecommerce/
+        ├── EcommerceService.java     // business logic
+        ├── Product.java
+        ├── adapters/                 // adapters that implement ports
+        │   ├── quarkus/              // adapters using Quarkus
+        │   │   └── ...
+        │   └── spring/               // adapters using Spring
+        │       └── ...
+        ├── events/                   // kafka events
+        │   └── ...
+        └── ports/                    // ports that define how the service interact with outside world
+            └── ...
+├── infrastructure/    // some docker stuff
+├── simple_user/       // the simple user service
+```
+
 # How to Run
 
 ## Step 0: Prerequisite
@@ -95,4 +126,6 @@ The e-commerce service is designed with Hexagonal Architecture, ensuring a clear
 
 Hexagonal Architecture also enhances testability. When Hexagonal Architecture was first introduced around 2005, mocking dependencies for unit testing was less streamlined than it is today. Now, with modern mocking libraries like Mockito, testing complex applications has become much simpler, as demonstrated in `EcommerceServiceTest.java`. For a purer demonstration of Hexagonal Architecture’s testability benefits, `EcommerceServiceIndependentTest.java` shows how to test the service independently of external dependencies. Comparing these two test files highlights how both approaches achieve low code complexity, with the Hexagonal design ensuring focused, maintainable tests regardless of external changes.
 
-However, everything comes with a price, so does the benefits brought by Hexagonal Architecture. One of the major downside of it is the increasing complexity in the application code. 
+While Hexagonal Architecture brings significant benefits, it also introduces some trade-offs, most notably added complexity in application code. This complexity arises from the architecture’s restriction on fully leveraging external frameworks, particularly in areas like dependency injection. For example, if the application were to depend entirely on Quarkus or Spring, dependency injection would be straightforward: `@Autowire` or `@Inject` could be used to inject dependencies like `EcommerceService::storage`, `EcommerceService::kafka`, and `EcommerceService::userService`. However, to adhere to Hexagonal principles, such annotations cannot be used. Even Jakarta EE’s `@Inject` is avoided, as it isn’t universally supported across frameworks. Instead, we create dedicated bean injection factories, such as `EcommerceBeanFactory.java` for Quarkus and `EcommerceBeanConfiguration.java` for Spring.
+
+In summary, Hexagonal Architecture is most suitable for projects where adaptability to new technologies is critical. Its core principle of isolating business logic from external libraries makes it particularly flexible. While the architecture’s high testability was a significant advantage when it was first introduced, modern mocking libraries now provide similar benefits with even greater ease, making this aspect somewhat less impactful today.
