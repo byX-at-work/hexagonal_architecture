@@ -17,7 +17,7 @@ public class EcommercePersistenceSpringAdapter implements EcommercePersistencePo
 
     public void saveProduct(Product product) {
         var id = Optional.ofNullable(product.getId()).orElse("");
-        var entity = repo.findById(id).orElse(new ProductEntity());
+        var entity = repo.findById(id).orElse(new SpringProductEntity());
         entity.fromDTO(product);
         repo.save(entity);
         product.setId(entity.id);

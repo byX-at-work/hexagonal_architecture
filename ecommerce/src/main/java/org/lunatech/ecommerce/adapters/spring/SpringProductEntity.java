@@ -13,7 +13,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-public class ProductEntity {
+public class SpringProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

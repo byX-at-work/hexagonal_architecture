@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
  * EcommerceJPARepo
  */
 @Repository
-public interface EcommerceJPARepo extends JpaRepository<ProductEntity, String> {
+public interface EcommerceJPARepo extends JpaRepository<SpringProductEntity, String> {
 
 
 }

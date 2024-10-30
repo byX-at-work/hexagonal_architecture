@@ -4,14 +4,13 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
-import org.lunatech.ecommerce.ports.UserServicePort;
 
 /**
  * UserServiceProxy
  */
 @Path("/api/users")
 @RegisterRestClient(configKey = "user")
-public interface UserServiceProxy extends UserServicePort {
+public interface UserServiceProxy {
 
     @GET
     @Path("/privilege")

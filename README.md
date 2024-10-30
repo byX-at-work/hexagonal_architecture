@@ -1,66 +1,98 @@
-# hexagonal_architecture_playground
+# Hexagonal Architecture Playground
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+This project is a microservice application that follows the principles of [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/), a design pattern designed to maximize maintainability, adaptability, and testability. By enforcing clear separation between core business logic and external dependencies, hexagonal architecture allows for easier modification, testing, and replacement of components, fostering a flexible, resilient system.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+To highlight the advantages of hexagonal architecture, this project showcases a simple e-commerce product management service with two distinct implementations: one using Quarkus and another using Spring. Through these implementations, the project demonstrates how the architecture’s design principles support a high degree of modularity and adaptability across different frameworks.
 
-## Running the application in dev mode
+# How to Run
 
-You can run your application in dev mode that enables live coding using:
+## Step 0: Prerequisite
 
-```shell script
-./mvnw compile quarkus:dev
-```
+Make sure you have the following software installed:
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+* JDK 17 
+* Maven
+* Docker and Docker compose
 
-## Packaging and running the application
-
-The application can be packaged using:
+## Step 1: Bring up the architecture
 
 ```shell script
-./mvnw package
+cd infrastructure
+docker-compose up -d
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+## Step 2: Run user service
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
+When performing the product management logic, the ecommerce service communicates with user service to check the user privilege (which is simplified by only returning `true` :) ). To run the user service, run the following command: 
 
 ```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
+cd simple_user
+./mvnw quarkus:dev
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+## Step 3: Run unit tests
 
-## Creating a native executable
-
-You can create a native executable using:
+Go to another terminal and run the following command:
 
 ```shell script
-./mvnw package -Dnative
+cd ecommerce
+./mvnw test
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+You should see 16 successful test run.
+
+## Step 4: Run ecommerce service
+
+As mentioned before, this project provides two implementations of the adapters using Quarkus and Spring. Therefore, you can run the service either by running:
 
 ```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
+./mvnw quarkus:dev
 ```
 
-You can then execute your native executable with: `./target/hexagonal_architecture_playground-1.0.0-SNAPSHOT-runner`
+or:
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+```shell script
+./mvnw spring-boot:run
+```
 
-## Related Guides
+> **_NOTE:_**  Since this is only a POC project, we simplified the Spring implementation. This includes the service-to-kafka and service-to-user-service communication. 
 
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
+> **_NOTE:_**  Terminal logging seems strange when running in Spring mode because we had to remove some conflicted logging dependency.
 
-## Provided Code
+## Step 5: Make some API calls
 
-### REST
+Let's first add a new product:
 
-Easily start your REST Web Services
+```shell script
+curl -X POST -d '{"name": "something new", "price": 999.99, "discount": 1.0}' -H "Content-Type: application/json" http://localhost:8080/api/ecommerce/product
+```
 
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+You should see the UUID of the product in the response body. Let's use that to check the result:
+
+```shell script
+curl http://localhost:8080/api/ecommerce/product/{productId}
+```
+
+The exact same product should be returned. If you are running the service in Quarkus mode, you can also check the actual emission of the Kafka event in the Redpanda console at http://localhost:9090/topics/, which is brought up by the previous `docker-compose` command.
+
+Next, you can also rename your product by:
+
+```shell script
+curl -X PUT -H "Content-type: application/json" -d 'new product name' http://localhost:8080/api/ecommerce/product/rename/{productId}
+```
+
+Or set the current discount of the product by:
+
+```shell script
+curl -X PUT -H "Content-type: application/json" -d '0.87' http://localhost:8080/api/ecommerce/product/discount/{productId}
+```
+
+Every rename and set-discount operation publishes a kafka event into the related topic.
+
+# Conclusion
+
+The e-commerce service is designed with Hexagonal Architecture, ensuring a clear separation between core business logic and external dependencies. In the source code of `EcommerceService.java`, you’ll notice it exclusively imports internal classes, reflecting the strong isolation of business logic. To integrate a new REST framework or data storage solution, developers only need to create a new adapter implementing `EcommerceInputPort.java` or `EcommercePersistencePort.java`, allowing flexibility in swapping or extending external components with minimal effort.
+
+Hexagonal Architecture also enhances testability. When Hexagonal Architecture was first introduced around 2005, mocking dependencies for unit testing was less streamlined than it is today. Now, with modern mocking libraries like Mockito, testing complex applications has become much simpler, as demonstrated in `EcommerceServiceTest.java`. For a purer demonstration of Hexagonal Architecture’s testability benefits, `EcommerceServiceIndependentTest.java` shows how to test the service independently of external dependencies. Comparing these two test files highlights how both approaches achieve low code complexity, with the Hexagonal design ensuring focused, maintainable tests regardless of external changes.
+
+However, everything comes with a price, so does the benefits brought by Hexagonal Architecture. One of the major downside of it is the increasing complexity in the application code. 
